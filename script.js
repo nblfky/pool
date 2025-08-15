@@ -2579,3 +2579,52 @@ function renderRankings() {
 // Example game updates
 updateRankings([0, 1], [2, 3]); // A & B win against C & D
 updateRankings([2, 3], [0, 1]); // C & D win against A & B
+
+document.addEventListener('DOMContentLoaded', () => {
+  const teamForm = document.getElementById('teamForm');
+  const playerSelects = teamForm.querySelectorAll('select');
+
+  teamForm.addEventListener('submit', (event) => {
+    event.preventDefault();
+    const team1 = [
+      parseInt(playerSelects[0].value),
+      parseInt(playerSelects[1].value)
+    ];
+    const team2 = [
+      parseInt(playerSelects[2].value),
+      parseInt(playerSelects[3].value)
+    ];
+
+    // Simulate a game where team1 wins
+    updateRankings(team1, team2);
+  });
+
+  renderRankings();
+});
+
+function createPlayerOptions() {
+  return players.map((player, index) => `<option value="${index}">${player.name}</option>`).join('');
+}
+
+function renderTeamForm() {
+  const teamFormContainer = document.getElementById('teamFormContainer');
+  teamFormContainer.innerHTML = `
+    <form id="teamForm">
+      <label>Team 1 Player 1:
+        <select>${createPlayerOptions()}</select>
+      </label>
+      <label>Team 1 Player 2:
+        <select>${createPlayerOptions()}</select>
+      </label>
+      <label>Team 2 Player 1:
+        <select>${createPlayerOptions()}</select>
+      </label>
+      <label>Team 2 Player 2:
+        <select>${createPlayerOptions()}</select>
+      </label>
+      <button type="submit">Submit Game Result</button>
+    </form>
+  `;
+}
+
+renderTeamForm();
