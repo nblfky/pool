@@ -2576,10 +2576,6 @@ function renderRankings() {
   });
 }
 
-// Example game updates
-updateRankings([0, 1], [2, 3]); // A & B win against C & D
-updateRankings([2, 3], [0, 1]); // C & D win against A & B
-
 document.addEventListener('DOMContentLoaded', () => {
   const teamForm = document.getElementById('teamForm');
   const playerSelects = teamForm.querySelectorAll('select');
