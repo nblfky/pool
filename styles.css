@@ -53,23 +53,32 @@ body {
 }
 
 .letter {
-  background: linear-gradient(180deg, #19191f, #14141a);
-  border: 1px solid #26262f;
+  background: linear-gradient(180deg, #ffffff, #f3f4f6);
+  border: 1px solid #e5e7eb;
   border-radius: 16px;
   padding: 18px;
-  min-height: 120px;
+  min-height: 240px;
+  aspect-ratio: 2 / 3; /* taller, card-like */
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   cursor: pointer;
   position: relative;
+  overflow: hidden; /* for corner fold and inner vignette */
   outline: none;
   transition: transform .15s ease, border-color .2s ease, box-shadow .15s ease;
+  color: #111827;
+  /* subtle base shadow and paper texture */
+  box-shadow: 0 2px 6px #00000014;
+  background-image:
+    linear-gradient(180deg, rgba(255,255,255,0.96), rgba(248,250,252,0.96)),
+    repeating-linear-gradient(0deg, rgba(0,0,0,0.015) 0 2px, transparent 2px 6px),
+    repeating-linear-gradient(90deg, rgba(0,0,0,0.01) 0 2px, transparent 2px 6px);
 }
 .letter:hover {
   transform: translateY(-2px);
-  border-color: #2e2e39;
-  box-shadow: 0 10px 24px #00000066, 0 0 0 6px var(--ring) inset;
+  border-color: #d1d5db;
+  box-shadow: 0 10px 24px #00000022, 0 6px 16px #0000001a;
 }
 .letter--pop { animation: pop .18s ease; }
 @keyframes pop {
@@ -79,7 +88,27 @@ body {
 }
 .letter:focus-visible { box-shadow: 0 0 0 3px var(--primary-600); }
 .letter__title { font-weight: 700; }
-.letter__subtitle { color: var(--muted); font-size: 13px; margin-top: 6px; }
+.letter__subtitle { color: #6b7280; font-size: 13px; margin-top: 6px; }
+/* Paper inner edge/vignette */
+.letter::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  box-shadow: inset 0 0 0 1px #e5e7eb, inset 0 12px 24px #0000000d;
+  pointer-events: none;
+}
+/* Folded corner */
+.letter::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 32px;
+  height: 32px;
+  background: linear-gradient(135deg, transparent 0 49%, #e5e7eb 50% 100%);
+  box-shadow: -2px 2px 3px #00000014;
+}
 /* Lock badge */
 .letter__badge {
   position: absolute;
