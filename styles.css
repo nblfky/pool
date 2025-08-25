@@ -74,18 +74,7 @@ body {
 .letter:focus-visible { box-shadow: 0 0 0 3px var(--primary-600); }
 .letter__title { font-weight: 700; }
 .letter__subtitle { color: var(--muted); font-size: 13px; margin-top: 6px; }
-.letter__status {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  font-size: 11px;
-  padding: 4px 8px;
-  border-radius: 999px;
-  background: #1f2937;
-  color: #cbd5e1;
-  border: 1px solid #2a3340;
-}
-.letter__status--opened { background: #052e1a; color: #a7f3d0; border-color: #063a22; }
+/* status badge removed in favor of unlimited opens with random variants */
 
 .modal {
   position: fixed;
