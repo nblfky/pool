@@ -53,6 +53,60 @@ const LETTERS = [
   },
 ];
 
+// In-memory tracking to avoid immediate repeats per letter
+const lastVariantIndexById = {};
+
+// 5-minute lock logic for non-sad cards
+const LOCK_KEY = 'open_when_lock_until_v1';
+const LOCK_MINUTES = 5;
+
+function getLockUntilMs() {
+  try {
+    const raw = localStorage.getItem(LOCK_KEY);
+    const n = raw ? Number(raw) : 0;
+    return Number.isFinite(n) ? n : 0;
+  } catch (_) {
+    return 0;
+  }
+}
+
+function setLockForMinutes(minutes) {
+  const until = Date.now() + minutes * 60 * 1000;
+  try { localStorage.setItem(LOCK_KEY, String(until)); } catch (_) {}
+  return until;
+}
+
+function clearLockIfExpired() {
+  const until = getLockUntilMs();
+  if (until && Date.now() >= until) {
+    try { localStorage.removeItem(LOCK_KEY); } catch (_) {}
+    return true;
+  }
+  return false;
+}
+
+function isLockedForLetter(letterId) {
+  const until = getLockUntilMs();
+  if (!until) return false;
+  const locked = Date.now() < until;
+  if (!locked) clearLockIfExpired();
+  if (!locked) return false;
+  return letterId !== 'sad';
+}
+
+function getRemainingMs() {
+  const until = getLockUntilMs();
+  const ms = until - Date.now();
+  return ms > 0 ? ms : 0;
+}
+
+function formatDurationMs(ms) {
+  const totalSeconds = Math.ceil(ms / 1000);
+  const m = Math.floor(totalSeconds / 60);
+  const s = totalSeconds % 60;
+  return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+}
+
 function renderLetters() {
   const container = document.getElementById('letters');
   container.innerHTML = '';
@@ -71,6 +125,18 @@ function renderLetters() {
     subtitle.className = 'letter__subtitle';
     subtitle.textContent = letter.hint;
 
+    // Lock state (sad is always accessible)
+    const isDisabled = isLockedForLetter(letter.id);
+    if (isDisabled) {
+      btn.disabled = true;
+      btn.setAttribute('aria-disabled', 'true');
+      const badge = document.createElement('span');
+      badge.className = 'letter__badge letter__badge--lock';
+      badge.setAttribute('data-countdown-for', letter.id);
+      badge.textContent = `Locked ${formatDurationMs(getRemainingMs())}`;
+      btn.appendChild(badge);
+    }
+
     btn.appendChild(title);
     btn.appendChild(subtitle);
 
@@ -86,8 +152,10 @@ function renderLetters() {
   });
 }
 
-function pickRandom(list) {
-  return list[Math.floor(Math.random() * list.length)];
+function pickRandomIndex(listLength) {
+  if (listLength <= 1) return 0;
+  let idx = Math.floor(Math.random() * listLength);
+  return idx;
 }
 
 function openLetter(letter) {
@@ -95,10 +163,23 @@ function openLetter(letter) {
   const title = document.getElementById('modal-title');
   const body = document.getElementById('modal-body');
 
+  // Respect lock: only allow 'sad' while locked
+  if (isLockedForLetter(letter.id)) {
+    return;
+  }
+
   title.textContent = letter.title;
   body.innerHTML = '';
 
-  const variant = pickRandom(letter.variants);
+  // Pick non-repeating variant index
+  let idx = pickRandomIndex(letter.variants.length);
+  const lastIdx = lastVariantIndexById[letter.id];
+  if (letter.variants.length > 1 && idx === lastIdx) {
+    // choose next index (wrap) to avoid immediate repeat
+    idx = (idx + 1) % letter.variants.length;
+  }
+  lastVariantIndexById[letter.id] = idx;
+  const variant = letter.variants[idx];
   if (variant.type === 'text') {
     const p = document.createElement('p');
     p.style.whiteSpace = 'pre-wrap';
@@ -120,6 +201,12 @@ function openLetter(letter) {
 
   modal.classList.add('is-open');
   modal.setAttribute('aria-hidden', 'false');
+
+  // Start/refresh lock only when opening 'sad'
+  if (letter.id === 'sad') {
+    setLockForMinutes(LOCK_MINUTES);
+    renderLetters();
+  }
 
   // focus management
   document.getElementById('modal-close').focus();
@@ -158,6 +245,23 @@ function ready(fn) {
 ready(() => {
   renderLetters();
   setupModalControls();
+  // Countdown updater
+  setInterval(() => {
+    const container = document.getElementById('letters');
+    if (!container) return;
+    const remaining = getRemainingMs();
+    const locked = remaining > 0;
+    // Update countdown text
+    container.querySelectorAll('.letter__badge--lock').forEach((el) => {
+      el.textContent = `Locked ${formatDurationMs(remaining)}`;
+    });
+    // If lock expired, rerender to enable buttons
+    if (!locked) {
+      if (clearLockIfExpired()) {
+        renderLetters();
+      }
+    }
+  }, 1000);
 });
 
 
