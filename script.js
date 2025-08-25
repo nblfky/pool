@@ -58,7 +58,7 @@ const lastVariantIndexById = {};
 
 // 5-minute lock logic for any opened card (opened one stays accessible)
 const LOCK_KEY = 'open_when_lock_info_v1';
-const LOCK_MINUTES = 5;
+const LOCK_MINUTES = 1;
 
 function readLockInfo() {
   try {
