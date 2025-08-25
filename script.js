@@ -56,29 +56,37 @@ const LETTERS = [
 // In-memory tracking to avoid immediate repeats per letter
 const lastVariantIndexById = {};
 
-// 5-minute lock logic for non-sad cards
-const LOCK_KEY = 'open_when_lock_until_v1';
+// 5-minute lock logic for any opened card (opened one stays accessible)
+const LOCK_KEY = 'open_when_lock_info_v1';
 const LOCK_MINUTES = 5;
 
-function getLockUntilMs() {
+function readLockInfo() {
   try {
     const raw = localStorage.getItem(LOCK_KEY);
-    const n = raw ? Number(raw) : 0;
-    return Number.isFinite(n) ? n : 0;
+    if (!raw) return null;
+    // Backward compat: if raw is a number string, treat as until without allowedId
+    if (/^\d+$/.test(raw)) {
+      return { until: Number(raw), allowedId: null };
+    }
+    const obj = JSON.parse(raw);
+    if (!obj || typeof obj.until !== 'number') return null;
+    return { until: obj.until, allowedId: obj.allowedId || null };
   } catch (_) {
-    return 0;
+    return null;
   }
 }
 
-function setLockForMinutes(minutes) {
+function writeLock(minutes, allowedId) {
   const until = Date.now() + minutes * 60 * 1000;
-  try { localStorage.setItem(LOCK_KEY, String(until)); } catch (_) {}
+  const payload = { until, allowedId };
+  try { localStorage.setItem(LOCK_KEY, JSON.stringify(payload)); } catch (_) {}
   return until;
 }
 
 function clearLockIfExpired() {
-  const until = getLockUntilMs();
-  if (until && Date.now() >= until) {
+  const info = readLockInfo();
+  if (!info) return false;
+  if (Date.now() >= info.until) {
     try { localStorage.removeItem(LOCK_KEY); } catch (_) {}
     return true;
   }
@@ -86,17 +94,20 @@ function clearLockIfExpired() {
 }
 
 function isLockedForLetter(letterId) {
-  const until = getLockUntilMs();
-  if (!until) return false;
-  const locked = Date.now() < until;
-  if (!locked) clearLockIfExpired();
-  if (!locked) return false;
-  return letterId !== 'sad';
+  const info = readLockInfo();
+  if (!info) return false;
+  const locked = Date.now() < info.until;
+  if (!locked) {
+    clearLockIfExpired();
+    return false;
+  }
+  return info.allowedId ? letterId !== info.allowedId : true;
 }
 
 function getRemainingMs() {
-  const until = getLockUntilMs();
-  const ms = until - Date.now();
+  const info = readLockInfo();
+  if (!info) return 0;
+  const ms = info.until - Date.now();
   return ms > 0 ? ms : 0;
 }
 
@@ -140,10 +151,19 @@ function renderLetters() {
     btn.appendChild(title);
     btn.appendChild(subtitle);
 
-    btn.addEventListener('click', () => openLetter(letter));
+    btn.addEventListener('click', () => {
+      // play pop animation
+      btn.classList.remove('letter--pop');
+      void btn.offsetWidth; // restart animation
+      btn.classList.add('letter--pop');
+      openLetter(letter);
+    });
     btn.addEventListener('keydown', (e) => {
       if (e.key === 'Enter' || e.key === ' ') {
         e.preventDefault();
+        btn.classList.remove('letter--pop');
+        void btn.offsetWidth;
+        btn.classList.add('letter--pop');
         openLetter(letter);
       }
     });
@@ -202,11 +222,9 @@ function openLetter(letter) {
   modal.classList.add('is-open');
   modal.setAttribute('aria-hidden', 'false');
 
-  // Start/refresh lock only when opening 'sad'
-  if (letter.id === 'sad') {
-    setLockForMinutes(LOCK_MINUTES);
-    renderLetters();
-  }
+  // Start/refresh lock for any opened letter; keep current letter accessible
+  writeLock(LOCK_MINUTES, letter.id);
+  renderLetters();
 
   // focus management
   document.getElementById('modal-close').focus();

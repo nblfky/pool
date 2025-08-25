@@ -71,9 +71,34 @@ body {
   border-color: #2e2e39;
   box-shadow: 0 10px 24px #00000066, 0 0 0 6px var(--ring) inset;
 }
+.letter--pop { animation: pop .18s ease; }
+@keyframes pop {
+  0% { transform: scale(1); }
+  50% { transform: scale(0.98); }
+  100% { transform: scale(1); }
+}
 .letter:focus-visible { box-shadow: 0 0 0 3px var(--primary-600); }
 .letter__title { font-weight: 700; }
 .letter__subtitle { color: var(--muted); font-size: 13px; margin-top: 6px; }
+/* Lock badge */
+.letter__badge {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  font-size: 11px;
+  padding: 4px 8px;
+  border-radius: 999px;
+  background: #3a1f1f;
+  color: #fecaca;
+  border: 1px solid #512525;
+}
+/* Disabled state */
+.letter[disabled], .letter:disabled {
+  cursor: not-allowed;
+  opacity: .65;
+  box-shadow: none;
+  transform: none;
+}
 /* status badge removed in favor of unlimited opens with random variants */
 
 .modal {
@@ -97,6 +122,11 @@ body {
   border-radius: 16px;
   padding: 20px;
   box-shadow: 0 24px 80px #00000088;
+  animation: modalIn .18s ease;
+}
+@keyframes modalIn {
+  from { transform: translateY(6px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
 }
 .modal__title { margin: 0 0 12px; }
 .modal__body { color: #e6e6e6; line-height: 1.6; }
