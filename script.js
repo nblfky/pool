@@ -152,19 +152,33 @@ function renderLetters() {
     btn.appendChild(subtitle);
 
     btn.addEventListener('click', () => {
-      // play pop animation
-      btn.classList.remove('letter--pop');
+      // flip animation, then open modal
+      btn.classList.remove('letter--flip');
       void btn.offsetWidth; // restart animation
-      btn.classList.add('letter--pop');
-      openLetter(letter);
+      btn.classList.add('letter--flip');
+      const onAnimEnd = (e) => {
+        if (e.animationName === 'letterFlip') {
+          btn.removeEventListener('animationend', onAnimEnd);
+          btn.classList.remove('letter--flip');
+          openLetter(letter);
+        }
+      };
+      btn.addEventListener('animationend', onAnimEnd);
     });
     btn.addEventListener('keydown', (e) => {
       if (e.key === 'Enter' || e.key === ' ') {
         e.preventDefault();
-        btn.classList.remove('letter--pop');
+        btn.classList.remove('letter--flip');
         void btn.offsetWidth;
-        btn.classList.add('letter--pop');
-        openLetter(letter);
+        btn.classList.add('letter--flip');
+        const handleFlipEnd = (ev) => {
+          if (ev.animationName === 'letterFlip') {
+            btn.removeEventListener('animationend', handleFlipEnd);
+            btn.classList.remove('letter--flip');
+            openLetter(letter);
+          }
+        };
+        btn.addEventListener('animationend', handleFlipEnd);
       }
     });
 

@@ -44,6 +44,7 @@ body {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 16px;
+  perspective: 1000px;
 }
 @media (min-width: 720px) {
   .letters-grid { grid-template-columns: repeat(3, 1fr); }
@@ -75,11 +76,22 @@ body {
     linear-gradient(180deg, rgba(255,255,255,0.96), rgba(248,250,252,0.96)),
     repeating-linear-gradient(0deg, rgba(0,0,0,0.02) 0 2px, transparent 2px 6px),
     repeating-linear-gradient(90deg, rgba(0,0,0,0.015) 0 2px, transparent 2px 6px);
+  transform-style: preserve-3d;
+  backface-visibility: hidden;
 }
 .letter:hover {
   transform: translateY(-2px);
   border-color: #d1d5db;
   box-shadow: 0 10px 24px #00000022, 0 6px 16px #0000001a;
+}
+.letter--flip {
+  animation: letterFlip .5s ease both;
+}
+@keyframes letterFlip {
+  0% { transform: rotateY(0deg); }
+  40% { transform: rotateY(180deg); }
+  60% { transform: rotateY(180deg) scale(0.98); }
+  100% { transform: rotateY(180deg) scale(1); }
 }
 .letter--pop { animation: pop .18s ease; }
 @keyframes pop {
