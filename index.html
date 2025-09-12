@@ -3,38 +3,41 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Open When Letters</title>
+    <title>Open When — Home</title>
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
     <header class="app-header">
       <h1>Open When</h1>
-      <p class="subtitle">Tap a letter when the moment feels right</p>
+      <p class="subtitle">Choose a feature</p>
     </header>
 
     <main class="container">
-      <section id="letters" class="letters-grid" aria-label="Letters grid">
-        <!-- Rendered by script.js -->
+      <section class="home-grid" aria-label="Main features">
+        <a class="home-card" href="letters.html">
+          <div class="home-card__title">Open When Letters</div>
+          <div class="home-card__subtitle">Tap a letter for a surprise</div>
+        </a>
+        <a class="home-card" href="feature2.html">
+          <div class="home-card__title">Feature Two</div>
+          <div class="home-card__subtitle">Coming soon</div>
+        </a>
+        <a class="home-card" href="feature3.html">
+          <div class="home-card__title">Feature Three</div>
+          <div class="home-card__subtitle">Coming soon</div>
+        </a>
+        <a class="home-card" href="feature4.html">
+          <div class="home-card__title">Feature Four</div>
+          <div class="home-card__subtitle">Coming soon</div>
+        </a>
       </section>
     </main>
-
-    <div id="modal" class="modal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="modal-title">
-      <div class="modal__backdrop" data-close-overlay></div>
-      <div class="modal__dialog" role="document">
-        <button class="modal__close" id="modal-close" aria-label="Close">×</button>
-        <h2 id="modal-title" class="modal__title"></h2>
-        <div id="modal-body" class="modal__body"></div>
-        <div class="modal__footer">
-          <button class="btn" id="modal-ok">Close</button>
-        </div>
-      </div>
-    </div>
 
     <footer class="app-footer">
       <small>Made by your annoying one ❤️.</small>
     </footer>
 
-    <script src="script.js"></script>
+    <!-- No script needed on home page for now -->
   </body>
   </html>
 
