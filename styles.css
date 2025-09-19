@@ -253,3 +253,70 @@ body {
 .back-link { color: #c4b5fd; text-decoration: none; }
 .back-link:hover { text-decoration: underline; }
 
+/* Arcade */
+.arcade-grid {
+  display: grid;
+  grid-template-columns: repeat(1, minmax(0, 1fr));
+  gap: 16px;
+}
+@media (min-width: 640px) {
+  .arcade-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (min-width: 1024px) {
+  .arcade-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+.arcade-card {
+  display: block;
+  text-decoration: none;
+  background: var(--card);
+  border: 1px solid #26262f;
+  color: var(--text);
+  border-radius: 16px;
+  padding: 18px;
+  min-height: 140px;
+  transition: transform .15s ease, border-color .2s ease, box-shadow .15s ease;
+  box-shadow: 0 2px 6px #00000014;
+  cursor: pointer;
+}
+.arcade-card:hover {
+  transform: translateY(-2px);
+  border-color: #3b3b46;
+  box-shadow: 0 10px 24px #00000022, 0 6px 16px #0000001a;
+}
+.arcade-card__title { font-weight: 700; font-size: 18px; }
+.arcade-card__subtitle { color: var(--muted); margin-top: 6px; font-size: 13px; }
+
+.game-header { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 12px; }
+.game-title { margin: 0; font-size: 18px; font-weight: 700; }
+.game-controls { display: flex; gap: 8px; }
+.scoreboard { color: var(--muted); font-size: 14px; }
+.game-area { border: 1px solid #26262f; border-radius: 12px; padding: 16px; background: #121218; min-height: 260px; position: relative; overflow: hidden; }
+.game-actions { margin-top: 12px; display: flex; gap: 8px; }
+
+/* Reaction Time */
+.reaction-panel { height: 220px; border-radius: 10px; display: flex; align-items: center; justify-content: center; user-select: none; }
+.reaction-panel--wait { background: #7f1d1d; border: 1px solid #4c1d1d; }
+.reaction-panel--ready { background: #14532d; border: 1px solid #134e4a; }
+.reaction-panel--too-soon { background: #78350f; border: 1px solid #713f12; }
+.reaction-text { color: #e5e7eb; font-size: 16px; }
+
+/* Aim Trainer */
+.target {
+  position: absolute;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 30% 30%, #fef3c7, #f59e0b);
+  border: 2px solid #fbbf24;
+  box-shadow: 0 6px 18px #00000066;
+  cursor: crosshair;
+}
+
+/* Memory Match */
+.memory-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+.memory-card { position: relative; aspect-ratio: 3/4; border-radius: 10px; background: #1f2937; border: 1px solid #2b3444; cursor: pointer; transform-style: preserve-3d; transition: transform .2s ease; }
+.memory-card.is-flipped { transform: rotateY(180deg); cursor: default; }
+.memory-face { position: absolute; inset: 0; border-radius: 10px; display: flex; align-items: center; justify-content: center; backface-visibility: hidden; }
+.memory-face--front { background: linear-gradient(180deg, #334155, #111827); color: #94a3b8; border: 1px solid #2b3444; }
+.memory-face--back { background: #0b1324; transform: rotateY(180deg); font-size: 28px; }
+
