@@ -33,6 +33,11 @@ body {
   color: var(--muted);
 }
 
+/* User bar */
+.userbar { display: inline-flex; align-items: center; gap: 10px; margin-top: 12px; background: #15151b; border: 1px solid #26262f; padding: 8px 12px; border-radius: 999px; }
+.userbar__avatar { width: 28px; height: 28px; display: grid; place-items: center; font-size: 18px; background: #0e0e14; border: 1px solid #26262f; border-radius: 50%; }
+.userbar__name { font-weight: 600; color: #eaeaea; font-size: 14px; }
+
 .container {
   width: 100%;
   max-width: 960px;
@@ -248,6 +253,19 @@ body {
 }
 .home-card__title { font-weight: 700; font-size: 18px; }
 .home-card__subtitle { color: var(--muted); margin-top: 6px; font-size: 13px; }
+
+/* Onboarding */
+.onboard-root { display: grid; place-items: center; min-height: calc(100vh - 180px); }
+.onboard-card { width: min(560px, calc(100% - 24px)); background: var(--card); border: 1px solid #26262f; border-radius: 16px; padding: 20px; box-shadow: 0 24px 80px #00000066; }
+.onboard-title { margin: 0 0 8px; }
+.onboard-desc { color: var(--muted); margin: 0 0 16px; }
+.onboard-form { display: grid; gap: 12px; }
+.onboard-label { font-size: 14px; color: #c9c9d1; }
+.onboard-input { width: 100%; padding: 10px 12px; border-radius: 10px; border: 1px solid #2a2a33; background: #101019; color: var(--text); }
+.avatar-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; }
+.avatar-choice { display: grid; place-items: center; font-size: 22px; padding: 10px 0; border-radius: 10px; border: 1px solid #2a2a33; background: #0f0f16; color: #eaeaea; cursor: pointer; }
+.avatar-choice.is-selected { outline: 3px solid var(--primary-600); border-color: var(--primary-600); }
+.onboard-actions { display: flex; justify-content: flex-end; margin-top: 8px; }
 
 /* Back link */
 .back-link { color: #c4b5fd; text-decoration: none; }
