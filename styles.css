@@ -306,6 +306,10 @@ body {
 .arcade-card__title { font-weight: 700; font-size: 18px; }
 .arcade-card__subtitle { color: var(--muted); margin-top: 6px; font-size: 13px; }
 
+/* Arcade lock */
+.arcade-card.is-locked { opacity: .6; cursor: not-allowed; position: relative; }
+.arcade-card.is-locked::after { content: 'Locked'; position: absolute; top: 10px; right: 10px; font-size: 11px; padding: 4px 8px; border-radius: 999px; background: #3a1f1f; color: #fecaca; border: 1px solid #512525; }
+
 .game-header { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 12px; }
 .game-title { margin: 0; font-size: 18px; font-weight: 700; }
 .game-controls { display: flex; gap: 8px; }

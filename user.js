@@ -10,17 +10,23 @@
   }
 
   function withDefaults(obj) {
-    const level = Math.max(1, Math.min(10, Number(obj && obj.level || 1)));
+    const base = { ...(obj || {}) };
+    const level = Math.max(1, Math.min(10, Number(base.level || 1)));
     const expToNext = level >= 10 ? 0 : (100 + (level - 1) * 50);
-    const exp = level >= 10 ? 0 : Math.max(0, Math.min(expToNext, Number(obj && obj.exp || 0)));
-    const shards = Math.max(0, Number(obj && obj.shards || 0));
+    const exp = level >= 10 ? 0 : Math.max(0, Math.min(expToNext, Number(base.exp || 0)));
+    const shards = Math.max(0, Number(base.shards || 0));
+    const arcadeKeys = Math.max(0, Number(base.arcadeKeys || 0));
+    const arcadeCompletions = base.arcadeCompletions && typeof base.arcadeCompletions === 'object' ? base.arcadeCompletions : {};
     return {
-      name: String(obj && obj.name || ''),
-      avatar: String(obj && obj.avatar || '🙂'),
+      ...base,
+      name: String(base.name || ''),
+      avatar: String(base.avatar || '🙂'),
       level,
       exp,
       expToNext,
-      shards
+      shards,
+      arcadeKeys,
+      arcadeCompletions
     };
   }
 
@@ -84,6 +90,27 @@
     const updated = { ...p, shards: p.shards + amount };
     saveProfile(updated);
     updateUserbar(updated);
+    return updated;
+  }
+
+  function getArcadeKeys() { const p = readProfile(); return p ? p.arcadeKeys : 0; }
+  function grantArcadeKeys(amount) {
+    const p = readProfile();
+    if (!p) return null;
+    const n = Number(amount);
+    const add = Number.isFinite(n) ? n : 1;
+    const updated = { ...p, arcadeKeys: Math.max(0, (p.arcadeKeys || 0) + add) };
+    saveProfile(updated);
+    updateUserbar(updated);
+    return updated;
+  }
+  function setArcadeCompleted(gameId) {
+    const p = readProfile();
+    if (!p) return null;
+    const map = { ...(p.arcadeCompletions || {}) };
+    map[String(gameId)] = true;
+    const updated = { ...p, arcadeCompletions: map };
+    saveProfile(updated);
     return updated;
   }
 
@@ -273,7 +300,7 @@
   });
 
   // Optional: expose for debugging
-  window.userProfile = { read: readProfile, save: saveProfile, addExp, addShards };
+  window.userProfile = { read: readProfile, save: saveProfile, addExp, addShards, getArcadeKeys, grantArcadeKeys, setArcadeCompleted };
 })();
 
 
