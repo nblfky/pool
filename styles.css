@@ -37,6 +37,8 @@ body {
 .userbar { display: inline-flex; align-items: center; gap: 10px; margin-top: 12px; background: #15151b; border: 1px solid #26262f; padding: 8px 12px; border-radius: 999px; }
 .userbar__avatar { width: 28px; height: 28px; display: grid; place-items: center; font-size: 18px; background: #0e0e14; border: 1px solid #26262f; border-radius: 50%; }
 .userbar__name { font-weight: 600; color: #eaeaea; font-size: 14px; }
+.userbar__stats { display: inline-flex; align-items: center; gap: 8px; margin-left: 8px; padding-left: 10px; border-left: 1px solid #26262f; color: #d1d5db; font-size: 12px; }
+.userbar__stat { background: #0e0e14; border: 1px solid #26262f; padding: 4px 8px; border-radius: 999px; }
 
 .container {
   width: 100%;

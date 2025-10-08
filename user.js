@@ -9,13 +9,28 @@
     }
   }
 
+  function withDefaults(obj) {
+    const level = Math.max(1, Math.min(10, Number(obj && obj.level || 1)));
+    const expToNext = level >= 10 ? 0 : (100 + (level - 1) * 50);
+    const exp = level >= 10 ? 0 : Math.max(0, Math.min(expToNext, Number(obj && obj.exp || 0)));
+    const shards = Math.max(0, Number(obj && obj.shards || 0));
+    return {
+      name: String(obj && obj.name || ''),
+      avatar: String(obj && obj.avatar || '🙂'),
+      level,
+      exp,
+      expToNext,
+      shards
+    };
+  }
+
   function readProfile() {
     try {
       const raw = localStorage.getItem(PROFILE_KEY);
       if (!raw) return null;
       const parsed = JSON.parse(raw);
       if (!parsed || typeof parsed !== 'object') return null;
-      return { name: String(parsed.name || ''), avatar: String(parsed.avatar || '🙂') };
+      return withDefaults(parsed);
     } catch (e) {
       return null;
     }
@@ -31,6 +46,45 @@
     const path = (location.pathname || '').split('/');
     const last = path[path.length - 1] || 'index.html';
     return last.toLowerCase();
+  }
+
+  function expRequirementForLevel(level) {
+    if (level >= 10) return 0;
+    return 100 + (Math.max(1, level) - 1) * 50;
+  }
+
+  function addExp(amount) {
+    const p = readProfile();
+    if (!p) return null;
+    if (p.level >= 10 || !Number.isFinite(amount) || amount <= 0) return p;
+    let level = p.level;
+    let exp = p.exp + amount;
+    let expToNext = p.expToNext;
+    while (level < 10) {
+      if (exp < expToNext) break;
+      exp -= expToNext;
+      level += 1;
+      expToNext = expRequirementForLevel(level);
+    }
+    if (level >= 10) {
+      level = 10;
+      exp = 0;
+      expToNext = 0;
+    }
+    const updated = { ...p, level, exp, expToNext };
+    saveProfile(updated);
+    updateUserbar(updated);
+    return updated;
+  }
+
+  function addShards(amount) {
+    const p = readProfile();
+    if (!p) return null;
+    if (!Number.isFinite(amount) || amount <= 0) return p;
+    const updated = { ...p, shards: p.shards + amount };
+    saveProfile(updated);
+    updateUserbar(updated);
+    return updated;
   }
 
   function ensureProfile() {
@@ -71,9 +125,44 @@
     name.className = 'userbar__name';
     name.textContent = profile.name || '';
 
+    const stats = document.createElement('div');
+    stats.className = 'userbar__stats';
+
+    const lvl = document.createElement('div');
+    lvl.className = 'userbar__stat';
+    lvl.setAttribute('data-user-lvl', '');
+
+    const exp = document.createElement('div');
+    exp.className = 'userbar__stat';
+    exp.setAttribute('data-user-exp', '');
+
+    const ms = document.createElement('div');
+    ms.className = 'userbar__stat';
+    ms.setAttribute('data-user-ms', '');
+
+    stats.appendChild(lvl);
+    stats.appendChild(exp);
+    stats.appendChild(ms);
+
     bar.appendChild(avatar);
     bar.appendChild(name);
+    bar.appendChild(stats);
     header.appendChild(bar);
+
+    updateUserbar(profile);
+  }
+
+  function updateUserbar(profile) {
+    const bar = document.querySelector('.userbar');
+    if (!bar) return;
+    const p = profile || readProfile();
+    if (!p) return;
+    const lvlEl = bar.querySelector('[data-user-lvl]');
+    const expEl = bar.querySelector('[data-user-exp]');
+    const msEl = bar.querySelector('[data-user-ms]');
+    if (lvlEl) lvlEl.textContent = `LVL ${p.level}`;
+    if (expEl) expEl.textContent = p.level >= 10 ? 'EXP MAX' : `EXP ${p.exp}/${p.expToNext}`;
+    if (msEl) msEl.textContent = `${p.shards} MS`;
   }
 
   function setupOnboarding() {
@@ -165,7 +254,7 @@
         nameInput.focus();
         return;
       }
-      saveProfile({ name: trimmed, avatar: selectedAvatar });
+      saveProfile(withDefaults({ name: trimmed, avatar: selectedAvatar, level: 1, exp: 0, shards: 0 }));
       location.replace('index.html');
     });
 
@@ -184,7 +273,7 @@
   });
 
   // Optional: expose for debugging
-  window.userProfile = { read: readProfile, save: saveProfile };
+  window.userProfile = { read: readProfile, save: saveProfile, addExp, addShards };
 })();
 
 
