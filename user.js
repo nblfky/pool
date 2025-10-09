@@ -19,6 +19,7 @@
     const arcadeCompletions = base.arcadeCompletions && typeof base.arcadeCompletions === 'object' ? base.arcadeCompletions : {};
     const inventory = base.inventory && typeof base.inventory === 'object' ? base.inventory : {};
     const equipped = base.equipped && typeof base.equipped === 'object' ? base.equipped : { head: null, body: null, legs: null, accessory: null, weapon: null };
+    const wheel = base.wheel && typeof base.wheel === 'object' ? base.wheel : { nextAt: 0 };
     return {
       ...base,
       name: String(base.name || ''),
@@ -30,7 +31,8 @@
       arcadeKeys,
       arcadeCompletions,
       inventory,
-      equipped
+      equipped,
+      wheel
     };
   }
 
@@ -95,6 +97,16 @@
     saveProfile(updated);
     updateUserbar(updated);
     return updated;
+  }
+  function spendShards(amount) {
+    const p = readProfile();
+    if (!p) return { ok: false, reason: 'no_profile' };
+    const n = Math.max(0, Number(amount || 0));
+    if (p.shards < n) return { ok: false, reason: 'insufficient_funds' };
+    const updated = { ...p, shards: p.shards - n };
+    saveProfile(updated);
+    updateUserbar(updated);
+    return { ok: true, profile: updated };
   }
 
   function getArcadeKeys() { const p = readProfile(); return p ? p.arcadeKeys : 0; }

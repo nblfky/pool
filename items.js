@@ -38,6 +38,8 @@
       { id: 'itm_potion_weak',         name: 'Potion of Weakness',  price: 1000 },
       { id: 'itm_potion_power',        name: 'Potion of Power',     price: 1200 },
       { id: 'itm_potion_death',        name: 'Potion of Death',     price: 1500 },
+      { id: 'itm_necklace_endurance',  name: 'Necklace of Endurance', price: 0 },
+      { id: 'itm_revive_stone',        name: 'Revive Stone',          price: 0 },
     ]},
     { cat: 'Miscellaneous', slot: null, items: [
       { id: 'misc_letter_key',         name: 'Letter Key',          price: 100 },
@@ -45,6 +47,10 @@
       { id: 'misc_wheel_key',          name: 'Wheel of Fortune Key', price: 750 },
       { id: 'misc_adv_wheel_key',      name: 'Advanced Wheel of Fortune Key', price: 2000 },
       { id: 'misc_e_key',              name: 'E Key',               price: 10000 },
+    ]},
+    // Extra wheel-only weapon
+    { cat: 'Wheel Exclusives', slot: 'weapon', items: [
+      { id: 'wp_hellblade',            name: 'Hellblade',            price: 0 },
     ]},
   ];
 

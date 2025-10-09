@@ -344,6 +344,9 @@ body {
 .memory-face--front { background: linear-gradient(180deg, #334155, #111827); color: #94a3b8; border: 1px solid #2b3444; }
 .memory-face--back { background: #0b1324; transform: rotateY(180deg); font-size: 28px; }
 
+/* Wheel */
+.wheel { width: 260px; height: 260px; margin: 12px auto; border-radius: 50%; background: #0b1324; border: 1px solid #2b3444; position: relative; box-shadow: 0 24px 80px #00000066; transition: transform 0.2s linear; }
+.wheel-pointer { width: 0; height: 0; border-left: 10px solid transparent; border-right: 10px solid transparent; border-bottom: 16px solid #a78bfa; margin: 0 auto; }
 /* Shop */
 .shop-grid { display: grid; gap: 24px; }
 .shop-category { margin: 0; font-size: 16px; color: #d1d5db; }
