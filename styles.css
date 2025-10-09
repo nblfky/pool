@@ -365,3 +365,19 @@ body {
 .inv-card__meta { display: flex; justify-content: space-between; align-items: center; }
 .inv-card__name { font-weight: 700; }
 .inv-card__qty { color: var(--muted); font-size: 13px; }
+
+/* Character */
+.char-header { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
+.char-identity { display: flex; align-items: center; gap: 12px; background: var(--card); border: 1px solid #26262f; padding: 10px 12px; border-radius: 12px; }
+.char-avatar { width: 40px; height: 40px; display: grid; place-items: center; font-size: 24px; background: #0e0e14; border: 1px solid #26262f; border-radius: 50%; }
+.char-name { font-weight: 800; }
+.char-meta { color: var(--muted); font-size: 13px; }
+.char-stats { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin-bottom: 16px; }
+.char-stat { background: var(--card); border: 1px solid #26262f; border-radius: 12px; padding: 12px; display: flex; justify-content: space-between; align-items: center; }
+.char-stat span { color: var(--muted); }
+.char-equip { display: grid; gap: 12px; }
+.equip-slot { background: var(--card); border: 1px solid #26262f; border-radius: 12px; padding: 12px; display: grid; gap: 8px; }
+.equip-title { font-weight: 700; }
+.equip-controls { display: flex; gap: 8px; align-items: center; }
+.equip-select { background: #101019; color: var(--text); border: 1px solid #2a2a33; padding: 8px 10px; border-radius: 10px; }
+.equip-current { color: var(--muted); font-size: 13px; }

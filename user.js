@@ -18,6 +18,7 @@
     const arcadeKeys = Math.max(0, Number(base.arcadeKeys || 0));
     const arcadeCompletions = base.arcadeCompletions && typeof base.arcadeCompletions === 'object' ? base.arcadeCompletions : {};
     const inventory = base.inventory && typeof base.inventory === 'object' ? base.inventory : {};
+    const equipped = base.equipped && typeof base.equipped === 'object' ? base.equipped : { head: null, body: null, legs: null, accessory: null, weapon: null };
     return {
       ...base,
       name: String(base.name || ''),
@@ -28,7 +29,8 @@
       shards,
       arcadeKeys,
       arcadeCompletions,
-      inventory
+      inventory,
+      equipped
     };
   }
 
@@ -144,6 +146,29 @@
     const updated = { ...p, inventory: inv, shards: p.shards - price };
     saveProfile(updated);
     updateUserbar(updated);
+    return { ok: true, profile: updated };
+  }
+
+  // Equip helpers
+  function equipItem(slot, itemId) {
+    const p = readProfile();
+    if (!p) return { ok: false, reason: 'no_profile' };
+    const inv = { ...(p.inventory || {}) };
+    const id = String(itemId);
+    if (!inv[id] || inv[id] <= 0) return { ok: false, reason: 'not_owned' };
+    const eq = { ...(p.equipped || {}) };
+    eq[String(slot)] = id;
+    const updated = { ...p, equipped: eq };
+    saveProfile(updated);
+    return { ok: true, profile: updated };
+  }
+  function unequipItem(slot) {
+    const p = readProfile();
+    if (!p) return { ok: false, reason: 'no_profile' };
+    const eq = { ...(p.equipped || {}) };
+    eq[String(slot)] = null;
+    const updated = { ...p, equipped: eq };
+    saveProfile(updated);
     return { ok: true, profile: updated };
   }
 
@@ -343,7 +368,9 @@
     setArcadeCompleted,
     getInventory,
     addItemToInventory,
-    purchaseItem
+    purchaseItem,
+    equipItem,
+    unequipItem
   };
 })();
 
