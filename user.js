@@ -375,6 +375,7 @@
     save: saveProfile,
     addExp,
     addShards,
+    spendShards,
     getArcadeKeys,
     grantArcadeKeys,
     setArcadeCompleted,

@@ -69,17 +69,19 @@
       path.setAttribute('stroke-width', '1');
       svg.appendChild(path);
 
-      // label
-      const mid = polar(cx, cy, r * 0.6, startAngle + sweep / 2);
-      const text = document.createElementNS(svgNS, 'text');
-      text.setAttribute('x', String(mid.x));
-      text.setAttribute('y', String(mid.y));
-      text.setAttribute('text-anchor', 'middle');
-      text.setAttribute('dominant-baseline', 'middle');
-      text.setAttribute('fill', '#eaeaea');
-      text.setAttribute('font-size', '11');
-      text.textContent = seg.label;
-      svg.appendChild(text);
+      // label only for larger segments (weight >= 3). Others will be in legend.
+      if (seg.weight >= 3) {
+        const mid = polar(cx, cy, r * 0.6, startAngle + sweep / 2);
+        const text = document.createElementNS(svgNS, 'text');
+        text.setAttribute('x', String(mid.x));
+        text.setAttribute('y', String(mid.y));
+        text.setAttribute('text-anchor', 'middle');
+        text.setAttribute('dominant-baseline', 'middle');
+        text.setAttribute('fill', '#eaeaea');
+        text.setAttribute('font-size', '11');
+        text.textContent = seg.label;
+        svg.appendChild(text);
+      }
 
       startAngle = endAngle;
     });
@@ -103,7 +105,24 @@
     root.appendChild(pointer);
     root.appendChild(wheel);
     wheel.appendChild(svg);
+    // Legend
+    const legend = document.createElement('div');
+    legend.className = 'wheel-legend';
+    SEGMENTS.forEach((seg, idx) => {
+      const row = document.createElement('div');
+      row.className = 'wheel-legend__row';
+      const sw = document.createElement('span');
+      sw.className = 'wheel-legend__swatch';
+      sw.style.background = segmentColor(idx);
+      const lab = document.createElement('span');
+      lab.textContent = seg.label;
+      row.appendChild(sw);
+      row.appendChild(lab);
+      legend.appendChild(row);
+    });
+
     root.appendChild(actions);
+    root.appendChild(legend);
 
     let spinning = false;
     let rotation = 0;
