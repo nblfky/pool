@@ -17,6 +17,7 @@
     const shards = Math.max(0, Number(base.shards || 0));
     const arcadeKeys = Math.max(0, Number(base.arcadeKeys || 0));
     const arcadeCompletions = base.arcadeCompletions && typeof base.arcadeCompletions === 'object' ? base.arcadeCompletions : {};
+    const inventory = base.inventory && typeof base.inventory === 'object' ? base.inventory : {};
     return {
       ...base,
       name: String(base.name || ''),
@@ -26,7 +27,8 @@
       expToNext,
       shards,
       arcadeKeys,
-      arcadeCompletions
+      arcadeCompletions,
+      inventory
     };
   }
 
@@ -112,6 +114,37 @@
     const updated = { ...p, arcadeCompletions: map };
     saveProfile(updated);
     return updated;
+  }
+
+  // Inventory helpers
+  function getInventory() {
+    const p = readProfile();
+    return p ? { ...(p.inventory || {}) } : {};
+  }
+  function addItemToInventory(itemId, qty) {
+    const p = readProfile();
+    if (!p) return null;
+    const inv = { ...(p.inventory || {}) };
+    const id = String(itemId);
+    const n = Number(qty);
+    const add = Number.isFinite(n) && n > 0 ? n : 1;
+    inv[id] = (inv[id] || 0) + add;
+    const updated = { ...p, inventory: inv };
+    saveProfile(updated);
+    return updated;
+  }
+  function purchaseItem(itemId, costMs) {
+    const p = readProfile();
+    if (!p) return { ok: false, reason: 'no_profile' };
+    const price = Math.max(0, Number(costMs || 0));
+    if (p.shards < price) return { ok: false, reason: 'insufficient_funds' };
+    const inv = { ...(p.inventory || {}) };
+    const id = String(itemId);
+    inv[id] = (inv[id] || 0) + 1;
+    const updated = { ...p, inventory: inv, shards: p.shards - price };
+    saveProfile(updated);
+    updateUserbar(updated);
+    return { ok: true, profile: updated };
   }
 
   function ensureProfile() {
@@ -300,7 +333,18 @@
   });
 
   // Optional: expose for debugging
-  window.userProfile = { read: readProfile, save: saveProfile, addExp, addShards, getArcadeKeys, grantArcadeKeys, setArcadeCompleted };
+  window.userProfile = {
+    read: readProfile,
+    save: saveProfile,
+    addExp,
+    addShards,
+    getArcadeKeys,
+    grantArcadeKeys,
+    setArcadeCompleted,
+    getInventory,
+    addItemToInventory,
+    purchaseItem
+  };
 })();
 
 
